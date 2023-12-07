@@ -24,7 +24,7 @@ namespace D07
             string command = Console.ReadLine();
             if (command.ToUpper() == "Y")
             {
-                string resp = AOCOut.Submit(part1, YEAR, DAY, 2, SeshCookie);
+                string resp = AOCOut.Submit(part1, YEAR, DAY, 1, SeshCookie);
                 Console.WriteLine(resp);
 
                 Thread.Sleep(100);
