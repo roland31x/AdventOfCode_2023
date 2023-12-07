@@ -1,4 +1,5 @@
-﻿using AOCIn = AOCApi.InputGetter;
+﻿using System.Runtime.Intrinsics;
+using AOCIn = AOCApi.InputGetter;
 using AOCOut = AOCApi.OutputSubmitter;
 namespace D07
 {
@@ -8,7 +9,7 @@ namespace D07
         static int YEAR = 2023;
         static int DAY = 7;
         public readonly static string InputPath = @"..\..\..\input.txt";
-        public readonly static string SeshCookie = "cook";
+        public readonly static string SeshCookie = "coooookiiiieeee :3";
         public static void Main(string[] args)
         {
             List<string> lines = AOCIn.GetInput(InputPath, YEAR, DAY, SeshCookie);
@@ -16,20 +17,20 @@ namespace D07
             string part1 = Part1(lines);
             Console.WriteLine("Part 1 solution: " + part1);
 
-            //string part2 = Part2(lines);
-            //Console.WriteLine("Part 2 solution: " + part2);
+            string part2 = Part2(lines);
+            Console.WriteLine("Part 2 solution: " + part2);
 
             Console.WriteLine("Submit? Y/N");
             string command = Console.ReadLine();
             if (command.ToUpper() == "Y")
             {
-                string resp = AOCOut.Submit(part1, YEAR, DAY, 1, SeshCookie);
+                string resp = AOCOut.Submit(part1, YEAR, DAY, 2, SeshCookie);
                 Console.WriteLine(resp);
 
-                //Thread.Sleep(100);
+                Thread.Sleep(100);
 
-                //string resp2 = AOCOut.Submit(part2, YEAR, DAY, 2, SeshCookie);
-                //Console.WriteLine(resp2);
+                string resp2 = AOCOut.Submit(part2, YEAR, DAY, 2, SeshCookie);
+                Console.WriteLine(resp2);
             }
         }
         private static string Part1(List<string> lines)
@@ -41,10 +42,10 @@ namespace D07
             {
                 string hand = line.Split(' ')[0];
                 int bid = int.Parse(line.Split(' ')[1]);
-                hands.Add(new Hand(hand, bid));
+                hands.Add(new Hand(hand, bid, 1));
             }
 
-            hands.Sort((x1, x2) => -1 * x1.CompareHand(x2));
+            hands.Sort((x1, x2) => x1.CompareHand(x2,1));
 
             for(int i = 0; i < hands.Count; i++)
             {
@@ -54,25 +55,44 @@ namespace D07
             return toreturn.ToString();
         }
         public class Hand
-        {
-            static List<string> cards = new List<string>() { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", };
+        { 
             public int[] v = new int[15];
             public int Bid = 0;
             public int Rank;
-            public string c;
-            public Hand(string cards, int bid)
+            public string c = "";
+            public string initial;
+            public Hand(string cards, int bid, int part)
             {
                 Bid = bid;
-                c = cards;
+                initial = cards;
                 for(int i = 0; i < cards.Length; i++)
                 {
-                    v[GetCard(cards[i].ToString())]++;
+                    v[GetCard(cards[i].ToString(), part)]++;
+                }
+
+                if (v[1] > 0)
+                {
+                    int bestidx = 1;
+                    int max = -1;
+                    for(int i = 14; i >= 2; i--)
+                    {
+                        if (v[i] > max)
+                        {
+                            bestidx = i;
+                            max = v[i];
+                        }
+                    }
+                    if(bestidx != 1)
+                    {
+                        v[bestidx] += v[1];
+                        v[1] = 0;
+                    }
                 }
                 GetScore();
             }
             public override string ToString()
             {
-                return c;
+                return initial;
             }
             public bool FiveOfAKind(out int idx)
             {
@@ -142,7 +162,7 @@ namespace D07
             {
                 return TwoOfAKind(out int idx) && TwoOfAKind(out int _, idx);
             }
-            public int GetCard(string s)
+            public int GetCard(string s, int part)
             {
                 if (s == "A")
                     return 14;
@@ -151,7 +171,12 @@ namespace D07
                 else if (s == "Q")
                     return 12;
                 else if (s == "J")
-                    return 11;
+                {
+                    if (part == 1)
+                        return 11;
+                    else
+                        return 1;
+                }
                 else if (s == "T")
                     return 10;
                 else
@@ -174,51 +199,85 @@ namespace D07
                 else
                     Rank = 4;
             }
-            public int CompareHand(Hand other)
+            public int CompareHand(Hand other, int part)
             {
                 if (this.Rank != other.Rank)
                     return this.Rank.CompareTo(other.Rank);
                 else
                 {
-                    int maxsc = 0;
-                    switch(Rank)
+                    for (int i = 0; i < initial.Length; i++) 
                     {
-                        case 10:
-                            maxsc = 5;
-                            break;
-                        case 9:
-                            maxsc = 4;
-                                break;
-                        case 8:
-                        case 7:
-                            maxsc = 3;
-                            break;
-                        case 6:
-                        case 5:
-                            maxsc = 2;
-                            break;
-                        default:
-                            maxsc = 1;
-                            break;
+                        int thisscore = GetCard(initial[i].ToString(), part);
+                        int otherscore = GetCard(other.initial[i].ToString(), part);
+                        if( thisscore != otherscore )
+                            return thisscore.CompareTo( otherscore );
                     }
-                    while(maxsc > 0)
-                    {
-                        int idx = 14;
-                        while (idx >= 0)
-                            idx--;
-                        if (idx == -1)
-                            maxsc--;
-                        else
-                            return v[idx].CompareTo(other.v[idx]);
-                    }                                      
                 }
+                return 0;
             }
+            //public int CompareHand2(Hand other)
+            //{
+            //    if (this.Rank != other.Rank)
+            //        return this.Rank.CompareTo(other.Rank);
+            //    else
+            //    {
+            //        int maxsc = 0;
+            //        switch(Rank)
+            //        {
+            //            case 10:
+            //                maxsc = 5;
+            //                break;
+            //            case 9:
+            //                maxsc = 4;
+            //                break;
+            //            case 8:
+            //            case 7:
+            //                maxsc = 3;
+            //                break;
+            //            case 6:
+            //            case 5:
+            //                maxsc = 2;
+            //                break;
+            //            default:
+            //                maxsc = 1;
+            //                break;
+            //        }
+            //        while(maxsc > 0)
+            //        {
+            //            int idx = 14;
+            //            while (idx >= 0)
+            //            {
+            //                if (((v[idx] == maxsc && v[idx] > 0) || (other.v[idx] == maxsc && other.v[idx] > 0)) && v[idx] != other.v[idx])
+            //                    break;
+            //                idx--;
+            //            }
+            //            if (idx == -1)
+            //                maxsc--;
+            //            else
+            //                return v[idx].CompareTo(other.v[idx]);
+            //        }                                      
+            //    }
+            //    return 0;
+            //}
         }
         private static string Part2(List<string> lines)
         {
             long toreturn = 0;
 
+            List<Hand> hands = new List<Hand>();
+            foreach (string line in lines)
+            {
+                string hand = line.Split(' ')[0];
+                int bid = int.Parse(line.Split(' ')[1]);
+                hands.Add(new Hand(hand, bid, 2));
+            }
 
+            hands.Sort((x1, x2) => x1.CompareHand(x2, 2));
+
+            for (int i = 0; i < hands.Count; i++)
+            {
+                toreturn += hands[i].Bid * (i + 1);
+            }
 
             return toreturn.ToString();
         }
