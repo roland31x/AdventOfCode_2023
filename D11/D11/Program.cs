@@ -125,13 +125,7 @@ namespace D11
                             jdiff += galaxyexpansion - 1;
                         }
 
-                        long local = 0;
-                        if (idiff == 0)
-                            local = jdiff;
-                        else if (jdiff == 0)
-                            local = idiff;
-                        else
-                            local = idiff + jdiff;
+                        long local = idiff + jdiff;
 
                         dists.Add(local);
                     }
