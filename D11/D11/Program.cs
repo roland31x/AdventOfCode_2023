@@ -114,16 +114,13 @@ namespace D11
                         (int g2i, int g2j) = galaxies[j];
 
                         long idiff = Math.Abs(g1i - g2i);
-                        foreach(int extra in extrarowsat.Where(x => (x >= g1i && x <= g2i) || (x >= g2i && x <= g1i)))
-                        {
-                            idiff += galaxyexpansion - 1;
-                        }
+
+                        idiff += (galaxyexpansion - 1) * extrarowsat.Where(x => (x >= g1i && x <= g2i) || (x >= g2i && x <= g1i)).Count();
+
 
                         long jdiff = Math.Abs(g2j - g1j);
-                        foreach (int extra in extracolsat.Where(x => (x >= g1j && x <= g2j) || (x >= g2j && x <= g1j)))
-                        {
-                            jdiff += galaxyexpansion - 1;
-                        }
+
+                        jdiff += (galaxyexpansion - 1) * extracolsat.Where(x => (x >= g1j && x <= g2j) || (x >= g2j && x <= g1j)).Count();
 
                         long local = idiff + jdiff;
 
