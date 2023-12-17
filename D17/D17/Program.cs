@@ -1,5 +1,6 @@
 ﻿using AOCOut = AOCApi.OutputSubmitter;
 using AOCIn = AOCApi.InputGetter;
+using System.Diagnostics;
 
 namespace D17
 {
@@ -70,7 +71,7 @@ namespace D17
                     if (nexti < 0 || nexti >= map.Count || nextj < 0 || nextj >= map[i].Count)
                         continue;
                     if (dir != -1)
-                        if (nextdir != dir && consec < 4)
+                        if (nextdir != dir && consec < minconsecutive)
                             continue;
                     pq.Enqueue((nexti, nextj, nextdir, nextdir == dir ? consec + 1 : 1, dist + map[nexti][nextj]), dist + map[nexti][nextj]);
                 }                              
