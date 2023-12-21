@@ -11,7 +11,7 @@ namespace D21
         static int YEAR = 2023;
         static int DAY = 21;
         public readonly static string InputPath = @"..\..\..\input.txt";
-        public readonly static string SeshCookie = "53616c7465645f5fd7e9d8c2e9314c17545e7e20013b8f93d4b4655003aa200c829fa30cd5ec7e713440fa5c2384671a859b9792ebf26bf4aac5bd79681dfbd6";
+        public readonly static string SeshCookie = "asd";
         public static void Main(string[] args)
         {
             List<string> lines = AOCIn.GetInput(InputPath, YEAR, DAY, SeshCookie);
