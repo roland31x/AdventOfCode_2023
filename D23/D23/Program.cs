@@ -183,8 +183,6 @@ namespace D23
                 marked = new int[m.Count, m[0].Length];
 
                 Stack<Node> path = new Stack<Node>();
-                Dictionary<Node, int> cache = new Dictionary<Node, int>();
-
                 path.Push(start);
                 int res = 0;
                 DFS(path, 0, ref res);
